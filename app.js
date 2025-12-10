@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json());
 
 // Use Morgan middleware to log HTTP requests
-app.use(morgan('dev'));
+if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 
 // Health Check route
 app.get('/health', (req, res) => {
