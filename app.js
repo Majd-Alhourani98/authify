@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 
 const authRouter = require('./routes/auth.routes');
+const AppError = require('./errors/AppError');
 
 // Express application
 const app = express();
@@ -24,10 +25,7 @@ app.get('/health', (req, res) => {
 app.use('/api/v1/auth', authRouter);
 
 app.all('*', (req, res, next) => {
-  const err = new Error(`Can't find ${req.originalUrl} on this server`);
-  err.statusCode = 404;
-  err.status = 'fail';
-  next(err);
+  next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
 });
 
 app.use((err, req, res, next) => {
