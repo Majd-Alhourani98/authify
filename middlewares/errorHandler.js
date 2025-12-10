@@ -21,6 +21,7 @@ const sendErrordev = (err, res) => {
   return res.status(err.statusCode).json({
     status: err.status,
     message: err.message,
+    code: err.code,
     stack: err.stack,
     error: err,
   });
@@ -30,6 +31,7 @@ const sendErrorProd = (err, res) => {
     return res.status(err.statusCode).json({
       status: err.status,
       message: err.message,
+      code: err.code,
     });
   } else {
     console.error('ERROR 💥', err);
@@ -37,6 +39,7 @@ const sendErrorProd = (err, res) => {
     return res.status(500).json({
       status: 'error',
       message: 'Something went very wrong. Please try again later',
+      code: err.code,
     });
   }
 };
