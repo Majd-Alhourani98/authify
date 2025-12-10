@@ -1,20 +1,24 @@
-const AppError = require('../errors/AppError');
+const { BadRequestError, ValidationError, ConflictError, InternalServerError } = require('../errors/customErrors');
+const HTTP_STATUS = require('../constants/httpStatus');
+const HTTP_MESSAGES = require('../constants/httpMessages');
+const ERROR_TYPES = require('../constants/errorTypes');
+const RESPONSE_STATUS = require('../constants/responseStatus');
 
 const handleCastErrorDB = err => {
-  return new AppError(`Invalid ${err.path}: ${err.value}.`, 400);
+  return new BadRequestError(`Invalid ${err.path}: ${err.value}.`);
 };
 
 const handleDuplicateFieldsDB = err => {
   const field = Object.keys(err.keyValue)[0];
   const value = err.keyValue[field];
   const message = `Duplicate field: ${field}: "${value}". Please use another value.`;
-  return new AppError(message, 400);
+  return new ConflictError(message);
 };
 
 const handleValidationErrorDB = err => {
   const errors = Object.values(err.errors).map(el => el.message);
   const message = `Invalid input data. ${errors.join('.  ')}`;
-  return new AppError(message, 400);
+  return new ValidationError(message);
 };
 
 const sendErrordev = (err, res) => {
@@ -36,10 +40,10 @@ const sendErrorProd = (err, res) => {
   } else {
     console.error('ERROR 💥', err);
 
-    return res.status(500).json({
-      status: 'error',
-      message: 'Something went very wrong. Please try again later',
-      code: err.code,
+    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      status: RESPONSE_STATUS.ERROR,
+      message: HTTP_MESSAGES.INTERNAL_SERVER_ERROR,
+      code: ERROR_TYPES.INTERNAL_SERVER_ERROR,
     });
   }
 };
