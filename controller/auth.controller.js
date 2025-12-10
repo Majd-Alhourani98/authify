@@ -4,6 +4,7 @@ const catchAsync = require('../utils/catchAsync');
 const signup = catchAsync(async (req, res) => {
   const { name, email, password, passwordConfirm } = req.body;
 
+  console.log(x);
   const user = await User.create({ name, email, password, passwordConfirm });
 
   res.status(201).json({

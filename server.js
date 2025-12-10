@@ -1,3 +1,8 @@
+process.on('uncaughtException', err => {
+  console.error('🔥🔥 Uncaught Exception:', err.name, err.message);
+  process.exit(1);
+});
+
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -9,6 +14,14 @@ connectDB();
 
 // Start Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`🔥 Server running on port ${PORT}`);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('UNHANDLED REJECTION — shutting down...', reason);
+
+  server.close(() => {
+    process.exit();
+  });
 });
