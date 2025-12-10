@@ -1,7 +1,5 @@
 const express = require('express');
 const morgan = require('morgan');
-const connectDB = require('./config/database');
-
 // Express application
 const app = express();
 
@@ -20,11 +18,4 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Connect to the database
-connectDB();
-
-// Start Server
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`🔥 Server running on port ${PORT}`);
-});
+module.exports = app;
