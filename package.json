@@ -1,0 +1,30 @@
+{
+  "name": "authify",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Majd-Alhourani98/authify#readme",
+  "bugs": {
+    "url": "https://github.com/Majd-Alhourani98/authify/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Majd-Alhourani98/authify.git"
+  },
+  "license": "ISC",
+  "author": "Majd Aldein Alhourani",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "express": "^4.22.1",
+    "morgan": "^1.10.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11",
+    "prettier": "^3.7.4"
+  }
+}
