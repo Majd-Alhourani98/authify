@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const buildDatabaseURI = require('../utils/buildDatabaseURI');
 
-const DB_URI = 'mongodb://localhost:27017/';
+const DB_URI = 'mongodb://localhost:27017/auth_db';
 
 // const { DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_NAME, DATABASE_URL } = process.env;
 // const DB_URI = buildDatabaseURI(DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_NAME, DATABASE_URL);

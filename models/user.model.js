@@ -1,6 +1,9 @@
+const crypto = require('crypto');
+
 const mongoose = require('mongoose');
 const { nanoid } = require('nanoid');
 const argon2 = require('argon2');
+const getExpiryTimestamp = require('../utils/getExpiryTimestamp');
 
 const userSchema = new mongoose.Schema(
   {
@@ -41,6 +44,15 @@ const userSchema = new mongoose.Schema(
         message: 'Passwords do not match',
       },
     },
+
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    emailVerificationToken: String,
+    emailVerificationTokenExpires: Date,
+    emailVerificationOTP: String,
+    emailVerificationOTPExpires: Date,
   },
   {
     timestamps: true,
@@ -83,6 +95,27 @@ userSchema.pre('save', async function () {
     this.username = username;
   }
 });
+
+userSchema.methods.generateEmailVerificationToken = function (length = 32, expiryDurationMs = 10 * 60 * 1000) {
+  const token = crypto.randomBytes(length).toString('hex');
+  this.emailVerificationToken = crypto.createHash('sha256').update(token).digest('hex');
+  this.emailVerificationTokenExpires = getExpiryTimestamp(expiryDurationMs);
+
+  return token;
+};
+
+userSchema.methods.generateEmailVerificationOTP = function (length = 6, expiryDurationMs = 10 * 60 * 1000) {
+  let otp = '';
+
+  for (let i = 0; i < length; i++) {
+    otp += crypto.randomInt(0, 10);
+  }
+
+  this.emailVerificationOTP = crypto.createHash('sha256').update(otp).digest('hex');
+  this.emailVerificationOTPExpires = getExpiryTimestamp(expiryDurationMs);
+
+  return otp;
+};
 
 const User = mongoose.model('User', userSchema);
 
