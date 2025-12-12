@@ -117,6 +117,20 @@ userSchema.methods.generateEmailVerificationOTP = function (length = 6, expiryDu
   return otp;
 };
 
+userSchema.methods.applyVerificationMethod = function (method = 'otp') {
+  if (method === 'link') {
+    return {
+      token: this.generateEmailVerificationToken(),
+      message: 'Signup successful! A verification link has been sent to your email.',
+    };
+  }
+
+  return {
+    otp: this.generateEmailVerificationOTP(),
+    message: 'Signup successful! An OTP has been sent to your email.',
+  };
+};
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
