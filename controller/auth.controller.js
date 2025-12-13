@@ -1,8 +1,9 @@
 const HTTP_STATUS = require('../constants/httpStatus');
 const RESPONSE_STATUS = require('../constants/responseStatus');
 const { ValidationError } = require('../errors/customErrors');
-
+const { sendVerificationEmail } = require('../services/email/emailService');
 const User = require('../models/user.model');
+
 const catchAsync = require('../utils/catchAsync');
 
 const signup = catchAsync(async (req, res, next) => {
@@ -17,6 +18,14 @@ const signup = catchAsync(async (req, res, next) => {
   const { message, otp, token } = user.applyVerificationMethod(verifyMethod);
   await user.save();
 
+  try {
+    await sendVerificationEmail(user, verifyMethod, token, otp);
+  } catch (error) {
+    await user.rollbackEmailVerification();
+    await user.save({ validateBeforeSave: false });
+  }
+
+  await user.save({ validateBeforeSave: false });
   res.status(HTTP_STATUS.CREATED).json({
     status: RESPONSE_STATUS.SUCCESS,
     data: { user },

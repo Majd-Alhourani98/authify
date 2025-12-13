@@ -131,6 +131,13 @@ userSchema.methods.applyVerificationMethod = function (method = 'otp') {
   };
 };
 
+userSchema.methods.rollbackEmailVerification = async function () {
+  this.emailVerificationOTP = undefined;
+  this.emailVerificationOTPExpires = undefined;
+  this.emailVerificationToken = undefined;
+  this.emailVerificationTokenExpires = undefined;
+};
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
