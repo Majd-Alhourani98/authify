@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const { nanoid } = require('nanoid');
 const argon2 = require('argon2');
 const getExpiryTimestamp = require('../utils/getExpiryTimestamp');
+const cron = require('node-cron');
 
 const userSchema = new mongoose.Schema(
   {
@@ -146,5 +147,13 @@ userSchema.methods.rollbackEmailVerification = async function () {
 };
 
 const User = mongoose.model('User', userSchema);
+
+cron.schedule('0 0 * * * * *', async () => {
+  console.log('Running daily cleanup...');
+
+  const result = await User.deleteMany({ isEmailVerified: false });
+
+  console.log(`Deleted ${result.deletedCount} zombie accounts.`);
+});
 
 module.exports = User;
