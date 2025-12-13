@@ -4,10 +4,8 @@ const sendEamilWithRetry = async (options, retries = 3, delay = 2000) => {
   for (let attempts = 1; attempts <= retries; attempts++) {
     try {
       await sendEmail(options);
-      console.log('success');
       return true;
     } catch (error) {
-      console.log(attempts);
       if (attempts == retries) {
         throw new Error(`Failed to send email to ${options.to} after ${retries} attempts.`);
       }
