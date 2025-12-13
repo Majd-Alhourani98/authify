@@ -1,5 +1,22 @@
 const transporter = require('../../config/transporter');
 
+const sendEamilWithRetry = async (options, retries = 3, delay = 2000) => {
+  for (let attempts = 1; attempts <= retries; attempts++) {
+    try {
+      await sendEmail(options);
+      console.log('success');
+      return true;
+    } catch (error) {
+      console.log(attempts);
+      if (attempts == retries) {
+        throw new Error(`Failed to send email to ${options.to} after ${retries} attempts.`);
+      }
+
+      await sleep(delay);
+    }
+  }
+};
+
 const sendEmail = async ({ to, subject, text, html }) => {
   await transporter.sendMail({
     from: process.env.MAIL_FROM,
@@ -19,7 +36,7 @@ const sendVerificationEmail = async (user, verifyMethod, token, otp) => {
         : `Your OTP for email verification is: ${otp}`,
   };
 
-  await sendEmail(emailOptions);
+  await sendEamilWithRetry(emailOptions);
 };
 
 module.exports = { sendVerificationEmail };
